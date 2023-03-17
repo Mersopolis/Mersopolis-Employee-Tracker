@@ -4,6 +4,8 @@ const express = require("express");
 const mysql = require("mysql2");
 // Imports and requires Inquirer
 const inquirer = require("inquirer");
+// Imports and requires console.table
+const cTable = require("console.table");
 
 // Defines port to use when establishing connection
 const PORT = process.env.PORT || 3001;
