@@ -106,9 +106,8 @@ const viewEmployees = () => {
 const addDepartment = () => {
   const sql = `INSERT INTO departments (name)
     VALUES (?)`;
-  const params = [body.name];
   
-  db.query(sql, params, (err, result) => {
+  db.query(sql, (err, result) => {
     console.log(result);
   });
 }
@@ -117,9 +116,8 @@ const addDepartment = () => {
 const addRole = () => {
   const sql = `INSERT INTO roles (name)
     VALUES (?)`;
-  const params = [body.name];
   
-  db.query(sql, params, (err, result) => {
+  db.query(sql, (err, result) => {
     console.log(result);
   });
 }
@@ -128,9 +126,8 @@ const addRole = () => {
 const addEmployee = () => {
   const sql = `INSERT INTO employees (first_name)
     VALUES (?)`;
-  const params = [body.first_name, body.last_name];
   
-  db.query(sql, params, (err, result) => {
+  db.query(sql, (err, result) => {
       console.log(result);
   });
 }
