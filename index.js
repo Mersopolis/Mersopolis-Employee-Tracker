@@ -1,6 +1,5 @@
 // Imports and requires mysql2 and its promis wrapper
-const mysql = require("mysql2");
-const mysqlPromise = require("mysql2/promise");
+const mysql = require("mysql2/promise");
 // Imports and requires Inquirer
 const inquirer = require("inquirer");
 // Imports and requires console.table
@@ -64,19 +63,21 @@ const trackerMenu = () => {
 };
 
 const viewDepartments = () => {
-  const sql = "SHOW * department_name AS name FROM departments";
+  const sql = "SELECT * FROM departments";
   
   db.query(sql, (err, result) => {
     if (err) {
-      console.log(err.message);
+      console.log("\n" + err.message + "\n");
     } 
-    else if (!result) {
-      console.log("No departments found");
+    else if (result == []) {
+      console.log("\nNo departments found\n");
     }
     else {
+      console.log(result);
       console.table(result);
     }
   });
+  trackerMenu();
 };
 
 const viewRoles = () => {
@@ -84,15 +85,16 @@ const viewRoles = () => {
   
   db.query(sql, (err, result) => {
     if (err) {
-      console.log(err.message);
+      console.log("\n" + err.message + "\n");
     } 
     else if (!result) {
-      console.log("No roles found");
+      console.log("\nNo roles found\n");
     }
     else {
-      console.log(result);
+      console.log("\n" + result + "\n");
     }
   });
+  trackerMenu();
 };
 
 const viewEmployees = () => {
@@ -100,15 +102,16 @@ const viewEmployees = () => {
   
   db.query(sql, (err, result) => {
     if (err) {
-      console.log(err.message);
+      console.log("\n" + err.message + "\n");
     } 
     else if (!result) {
-      console.log("No employees found");
+      console.log("\nNo employees found\n");
     } 
     else {
-      console.log(result);
+      console.log("\n" + result + "\n");
     }
   });
+  trackerMenu();
 };
 
 const addDepartmentPrompts = [
@@ -120,20 +123,28 @@ const addDepartmentPrompts = [
 ]
 
 // Add a department
-const addDepartment = () => {
-  inquirer.prompt(addDepartmentPrompts);
+const promptForDepartment = () => {
+  return inquirer.prompt(addDepartmentPrompts)
+}
 
-  const sql = `INSERT INTO departments (name)
-    VALUES (?)`;
-  
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.log(err.message);
-    }
-    else {
-      console.log(result);
-    }
-  });
+const addDepartment = () => {
+  promptForDepartment()
+  .then((response) => {
+    console.log(response);
+    const sql = `INSERT INTO departments (name) VALUES (${response.name})`; 
+
+    console.log(sql);
+
+    db.query(sql, (err, result) => {
+      if (err) {
+        console.log("\n" + err.message + "\n");
+      }
+      else {
+        console.log("\n" + result + "\n");
+      }
+    });
+  })
+  .then(trackerMenu());
 }
 
 const addRolePrompts = [
@@ -163,12 +174,13 @@ const addRole = () => {
   
   db.query(sql, (err, result) => {
     if (err) {
-      console.log(err.message);
+      console.log("\n" + err.message + "\n");
     }
     else {
-      console.log(result);
+      console.log("\n" + result + "\n");
     }
   });
+  trackerMenu();
 }
 
 const addEmployeePrompts = [
@@ -205,12 +217,13 @@ const addEmployee = () => {
   
   db.query(sql, (err, result) => {
     if (err) {
-      console.log(err.message);
+      console.log("\n" + err.message + "\n");
     }
     else {
-      console.log(result);
+      console.log("\n" + result + "\n");
     }
   });
+  trackerMenu();
 }
 
 const init = () => {
