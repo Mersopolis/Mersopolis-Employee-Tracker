@@ -1,5 +1,5 @@
-// Imports and requires mysql2 and its promis wrapper
-const mysql = require("mysql2/promise");
+// Imports and requires mysql2 and its promise wrapper
+const mysql = require("mysql2");
 // Imports and requires Inquirer
 const inquirer = require("inquirer");
 // Imports and requires console.table
@@ -65,19 +65,11 @@ const trackerMenu = () => {
 const viewDepartments = () => {
   const sql = "SELECT * FROM departments";
   
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.log("\n" + err.message + "\n");
-    } 
-    else if (result == []) {
-      console.log("\nNo departments found\n");
-    }
-    else {
-      console.log(result);
-      console.table(result);
-    }
-  });
-  trackerMenu();
+  db.promise().query(sql)
+  .then(([rows, fields]) => {
+    console.log(rows);
+  })
+  .then(trackerMenu());
 };
 
 const viewRoles = () => {
@@ -120,12 +112,12 @@ const addDepartmentPrompts = [
     name: "name",
     message: "What is the department's name?\n"
   }
-]
+];
 
 // Add a department
 const promptForDepartment = () => {
   return inquirer.prompt(addDepartmentPrompts)
-}
+};
 
 const addDepartment = () => {
   promptForDepartment()
@@ -135,17 +127,12 @@ const addDepartment = () => {
 
     console.log(sql);
 
-    db.query(sql, (err, result) => {
-      if (err) {
-        console.log("\n" + err.message + "\n");
-      }
-      else {
-        console.log("\n" + result + "\n");
-      }
+    db.promise().query(sql, function (err, results) {
+      console.log(results);
     });
   })
   .then(trackerMenu());
-}
+};
 
 const addRolePrompts = [
   {
@@ -164,7 +151,7 @@ const addRolePrompts = [
     message: "Which department does the role belong to?\n",
     choices: "Placeholder"/* TODO: Pull departments into dynamic list for choices */, 
   }
-]
+];
 
 // Add a role
 const addRole = () => {
@@ -181,7 +168,7 @@ const addRole = () => {
     }
   });
   trackerMenu();
-}
+};
 
 const addEmployeePrompts = [
   {
@@ -206,7 +193,7 @@ const addEmployeePrompts = [
     message: "Whos is the employee's manager?\n",
     choices: "Placeholder"/* TODO: Pull employees into dynamic list for choices */, 
   }
-]
+];
 
 // Add an employee
 const addEmployee = () => {
@@ -224,10 +211,10 @@ const addEmployee = () => {
     }
   });
   trackerMenu();
-}
+};
 
 const init = () => {
   trackerMenu();
-}
+};
 
 init();
