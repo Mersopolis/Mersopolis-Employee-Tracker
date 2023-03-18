@@ -67,7 +67,10 @@ const viewDepartments = () => {
   const sql = "SHOW * department_name AS name FROM departments";
   
   db.query(sql, (err, result) => {
-    if (!result) {
+    if (err) {
+      console.log(err.message);
+    } 
+    else if (!result) {
       console.log("No departments found");
     }
     else {
@@ -80,7 +83,10 @@ const viewRoles = () => {
   const sql = "SELECT id, role_name AS name FROM roles";
   
   db.query(sql, (err, result) => {
-    if (!result) {
+    if (err) {
+      console.log(err.message);
+    } 
+    else if (!result) {
       console.log("No roles found");
     }
     else {
@@ -93,42 +99,117 @@ const viewEmployees = () => {
   const sql = "SELECT id, first_name AS name FROM employees";
   
   db.query(sql, (err, result) => {
-    if (!result) {
+    if (err) {
+      console.log(err.message);
+    } 
+    else if (!result) {
       console.log("No employees found");
-    }
+    } 
     else {
       console.log(result);
     }
   });
 };
 
+const addDepartmentPrompts = [
+  {
+    type: "input",
+    name: "name",
+    message: "What is the department's name?\n"
+  }
+]
+
 // Add a department
 const addDepartment = () => {
+  inquirer.prompt(addDepartmentPrompts);
+
   const sql = `INSERT INTO departments (name)
     VALUES (?)`;
   
   db.query(sql, (err, result) => {
-    console.log(result);
+    if (err) {
+      console.log(err.message);
+    }
+    else {
+      console.log(result);
+    }
   });
 }
 
+const addRolePrompts = [
+  {
+    type: "input",
+    name: "title",
+    message: "What is the role's title?\n"
+  },
+  {
+    type: "input",
+    name: "salary",
+    message: "What is the role's salary?\n"
+  },
+  {
+    type: "list",
+    name: "department_id",
+    message: "Which department does the role belong to?\n",
+    choices: "Placeholder"/* TODO: Pull departments into dynamic list for choices */, 
+  }
+]
+
 // Add a role
 const addRole = () => {
+  inquirer.prompt(addRolePrompts);
   const sql = `INSERT INTO roles (name)
     VALUES (?)`;
   
   db.query(sql, (err, result) => {
-    console.log(result);
+    if (err) {
+      console.log(err.message);
+    }
+    else {
+      console.log(result);
+    }
   });
 }
 
+const addEmployeePrompts = [
+  {
+    type: "input",
+    name: "first_name",
+    message: "What is the employee's first name?\n"
+  },
+  {
+    type: "input",
+    name: "last_name",
+    message: "What is the employee's last name?\n"
+  },
+  {
+    type: "list",
+    name: "role_id",
+    message: "What is the employee's role?\n",
+    choices: "Placeholder"/* TODO: Pull roles into dynamic list for choices */, 
+  },
+  {
+    type: "list",
+    name: "manager_id",
+    message: "Whos is the employee's manager?\n",
+    choices: "Placeholder"/* TODO: Pull employees into dynamic list for choices */, 
+  }
+]
+
 // Add an employee
 const addEmployee = () => {
+  inquirer.prompt(addEmployeePrompts);
+
   const sql = `INSERT INTO employees (first_name)
     VALUES (?)`;
   
   db.query(sql, (err, result) => {
+    if (err) {
+      console.log(err.message);
+    }
+    else {
       console.log(result);
+    }
   });
 }
 
