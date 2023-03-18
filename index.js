@@ -1,7 +1,7 @@
 // Imports and requires Express
 const express = require("express");
 // Imports and requires mysql2
-const mysql = require("mysql2");
+const mysql = require("mysql2/promise");
 // Imports and requires Inquirer
 const inquirer = require("inquirer");
 // Imports and requires console.table
@@ -24,7 +24,7 @@ const db = mysql.createConnection(
     password: "SQL1wax@QSZ",
     database: "organization_db"
   },
-  console.log(`Connected to the organization_db database.`)
+  console.log("Connected to the organization_db database.")
 );
 
 const menuPrompt = [
@@ -42,10 +42,11 @@ const menuPrompt = [
       "Update an employee role"
     ], 
   },
-]
+];
 
 const trackerMenu = () => {
-  inquirer.prompt(menuPrompt).then((answers) => {
+  inquirer.prompt(menuPrompt)
+  .then((answers) => {
     switch (answers.menu) {
       case "View all departments": {
         return viewDepartments()
@@ -74,7 +75,7 @@ const trackerMenu = () => {
 
 const viewDepartments = () => {
   app.get("/api/departments", (req, res) => {
-    const sql = `SELECT id, department_name AS name FROM departments`;
+    const sql = "SELECT id, department_name AS name FROM departments";
     
     db.query(sql, (err, rows) => {
       if (err) {
@@ -91,7 +92,7 @@ const viewDepartments = () => {
 
 const viewRoles = () => {
   app.get("/api/roles", (req, res) => {
-    const sql = `SELECT id, role_name AS name FROM roles`;
+    const sql = "SELECT id, role_name AS name FROM roles";
     
     db.query(sql, (err, rows) => {
       if (err) {
@@ -108,7 +109,7 @@ const viewRoles = () => {
 
 const viewEmployees = () => {
   app.get("/api/employees", (req, res) => {
-    const sql = `SELECT id, employee_name AS name FROM employees`;
+    const sql = "SELECT id, employee_name AS name FROM employees";
     
     db.query(sql, (err, rows) => {
       if (err) {
@@ -126,8 +127,8 @@ const viewEmployees = () => {
 /*
 // Create a manager
 app.post("/api/new-manager", ({ body }, res) => {
-  const sql = `INSERT INTO employees (employee_name)
-    VALUES (?)`;
+  const sql = "INSERT INTO employees (employee_name)
+    VALUES (?)";
   const params = [body.employee_name];
   
   db.query(sql, params, (err, result) => {
@@ -152,5 +153,8 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+const init = () => {
+  trackerMenu();
+}
 
-trackerMenu();
+init();
