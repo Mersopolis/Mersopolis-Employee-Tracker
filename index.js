@@ -16,25 +16,23 @@ const db = mysql.createConnection(
   console.log("Connected to the organization_db database.")
 );
 
-const menuPrompt = [
-  {
-    type: "list",
-    name: "menu",
-    message: "What would you like to do? (Use the arrow keys to cycle through options and Enter to select the highlighted one)\n",
-    choices: [
-      "View all departments",
-      "View all roles",
-      "View all employees",
-      "Add a department",
-      "Add a role",
-      "Add an employee",
-      "Update an employee role"
-    ], 
-  },
-];
-
 const trackerMenu = () => {
-  inquirer.prompt(menuPrompt)
+  inquirer.prompt([
+    {
+      type: "list",
+      name: "menu",
+      message: "What would you like to do? (Use the arrow keys to cycle through options and Enter to select the highlighted one)\n",
+      choices: [
+        "View all departments",
+        "View all roles",
+        "View all employees",
+        "Add a department",
+        "Add a role",
+        "Add an employee",
+        "Update an employee role"
+      ], 
+    },
+  ])
   .then((answers) => {
     switch (answers.menu) {
       case "View all departments": {
@@ -63,13 +61,14 @@ const trackerMenu = () => {
 };
 
 const viewDepartments = () => {
-  const sql = "SELECT * FROM departments";
+  const sql = "SELECT * FROM departments;";
   
-  db.promise().query(sql)
+  db.promise().query({sql, rowsAsArray: true})
   .then(([rows, fields]) => {
-    console.log(rows);
-  })
-  .then(trackerMenu());
+    console.log("\n" + fields + "\n");
+    console.table("\n" + fields + "\n");
+    trackerMenu();
+  });
 };
 
 const viewRoles = () => {
@@ -106,56 +105,43 @@ const viewEmployees = () => {
   trackerMenu();
 };
 
-const addDepartmentPrompts = [
-  {
-    type: "input",
-    name: "name",
-    message: "What is the department's name?\n"
-  }
-];
-
 // Add a department
-const promptForDepartment = () => {
-  return inquirer.prompt(addDepartmentPrompts)
-};
-
 const addDepartment = () => {
-  promptForDepartment()
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "name",
+      message: "What is the department's name?\n"
+    }
+  ])
   .then((response) => {
-    console.log(response);
-    const sql = `INSERT INTO departments (name) VALUES (${response.name})`; 
+    const sql = `INSERT INTO departments (name) VALUES ("${response.name}");`; 
 
-    console.log(sql);
-
-    db.promise().query(sql, function (err, results) {
-      console.log(results);
-    });
-  })
-  .then(trackerMenu());
+    db.promise().query(sql)
+    .then(trackerMenu());
+  });
 };
-
-const addRolePrompts = [
-  {
-    type: "input",
-    name: "title",
-    message: "What is the role's title?\n"
-  },
-  {
-    type: "input",
-    name: "salary",
-    message: "What is the role's salary?\n"
-  },
-  {
-    type: "list",
-    name: "department_id",
-    message: "Which department does the role belong to?\n",
-    choices: "Placeholder"/* TODO: Pull departments into dynamic list for choices */, 
-  }
-];
 
 // Add a role
 const addRole = () => {
-  inquirer.prompt(addRolePrompts);
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "title",
+      message: "What is the role's title?\n"
+    },
+    {
+      type: "input",
+      name: "salary",
+      message: "What is the role's salary?\n"
+    },
+    {
+      type: "list",
+      name: "department_id",
+      message: "Which department does the role belong to?\n",
+      choices: "Placeholder"/* TODO: Pull departments into dynamic list for choices */, 
+    }
+  ]);
   const sql = `INSERT INTO roles (name)
     VALUES (?)`;
   
@@ -213,8 +199,4 @@ const addEmployee = () => {
   trackerMenu();
 };
 
-const init = () => {
-  trackerMenu();
-};
-
-init();
+trackerMenu();
