@@ -61,48 +61,35 @@ const trackerMenu = () => {
 };
 
 const viewDepartments = () => {
-  const sql = "SELECT * FROM departments;";
-  
-  db.promise().query({sql, rowsAsArray: true})
-  .then(([rows, fields]) => {
-    console.log("\n" + fields + "\n");
-    console.table("\n" + fields + "\n");
-    trackerMenu();
-  });
+  const sql = 'SELECT * FROM departments;';
+  db.promise()
+    .query({ sql, rowsAsArray: true })
+    .then(([rows]) => {
+      console.table('\n' + rows + '\n');
+      trackerMenu();
+    });
 };
 
 const viewRoles = () => {
-  const sql = "SELECT id, role_name AS name FROM roles";
+  const sql = "SELECT * FROM roles";
   
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.log("\n" + err.message + "\n");
-    } 
-    else if (!result) {
-      console.log("\nNo roles found\n");
-    }
-    else {
-      console.log("\n" + result + "\n");
-    }
-  });
-  trackerMenu();
+  db.promise()
+    .query({ sql, rowsAsArray: true })
+    .then(([rows]) => {
+      console.table('\n' + rows + '\n');
+      trackerMenu();
+    });
 };
 
 const viewEmployees = () => {
-  const sql = "SELECT id, first_name AS name FROM employees";
+  const sql = "SELECT * FROM employees";
   
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.log("\n" + err.message + "\n");
-    } 
-    else if (!result) {
-      console.log("\nNo employees found\n");
-    } 
-    else {
-      console.log("\n" + result + "\n");
-    }
-  });
-  trackerMenu();
+  db.promise()
+    .query({ sql, rowsAsArray: true })
+    .then(([rows]) => {
+      console.table('\n' + rows + '\n');
+      trackerMenu();
+    });
 };
 
 // Add a department
