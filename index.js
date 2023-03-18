@@ -1,20 +1,10 @@
-// Imports and requires Express
-const express = require("express");
-// Imports and requires mysql2
-const mysql = require("mysql2/promise");
+// Imports and requires mysql2 and its promis wrapper
+const mysql = require("mysql2");
+const mysqlPromise = require("mysql2/promise");
 // Imports and requires Inquirer
 const inquirer = require("inquirer");
 // Imports and requires console.table
 const cTable = require("console.table");
-
-// Defines port to use when establishing connection
-const PORT = process.env.PORT || 3001;
-// Defines call for express funciton
-const app = express();
-
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 // Connect to database
 const db = mysql.createConnection(
@@ -74,84 +64,76 @@ const trackerMenu = () => {
 };
 
 const viewDepartments = () => {
-  app.get("/api/departments", (req, res) => {
-    const sql = "SELECT id, department_name AS name FROM departments";
-    
-    db.query(sql, (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-         return;
-      }
-      res.json({
-        message: "success",
-        data: rows
-      });
-    });
+  const sql = "SHOW * department_name AS name FROM departments";
+  
+  db.query(sql, (err, result) => {
+    if (!result) {
+      console.log("No departments found");
+    }
+    else {
+      console.table(result);
+    }
   });
 };
 
 const viewRoles = () => {
-  app.get("/api/roles", (req, res) => {
-    const sql = "SELECT id, role_name AS name FROM roles";
-    
-    db.query(sql, (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-         return;
-      }
-      res.json({
-        message: "success",
-        data: rows
-      });
-    });
+  const sql = "SELECT id, role_name AS name FROM roles";
+  
+  db.query(sql, (err, result) => {
+    if (!result) {
+      console.log("No roles found");
+    }
+    else {
+      console.log(result);
+    }
   });
 };
 
 const viewEmployees = () => {
-  app.get("/api/employees", (req, res) => {
-    const sql = "SELECT id, employee_name AS name FROM employees";
-    
-    db.query(sql, (err, rows) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-         return;
-      }
-      res.json({
-        message: "success",
-        data: rows
-      });
-    });
+  const sql = "SELECT id, first_name AS name FROM employees";
+  
+  db.query(sql, (err, result) => {
+    if (!result) {
+      console.log("No employees found");
+    }
+    else {
+      console.log(result);
+    }
   });
 };
 
-/*
-// Create a manager
-app.post("/api/new-manager", ({ body }, res) => {
-  const sql = "INSERT INTO employees (employee_name)
-    VALUES (?)";
-  const params = [body.employee_name];
+// Add a department
+const addDepartment = () => {
+  const sql = `INSERT INTO departments (name)
+    VALUES (?)`;
+  const params = [body.name];
   
   db.query(sql, params, (err, result) => {
-    if (err) {
-      res.status(400).json({ error: err.message });
-      return;
-    }
-    res.json({
-      message: "success",
-      data: body
-    });
+    console.log(result);
   });
-});
-*/
+}
 
-// Default response for any other request (Not Found)
-app.use((req, res) => {
-  res.status(404).end();
-});
+// Add a role
+const addRole = () => {
+  const sql = `INSERT INTO roles (name)
+    VALUES (?)`;
+  const params = [body.name];
+  
+  db.query(sql, params, (err, result) => {
+    console.log(result);
+  });
+}
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Add an employee
+const addEmployee = () => {
+  const sql = `INSERT INTO employees (first_name)
+    VALUES (?)`;
+  const params = [body.first_name, body.last_name];
+  
+  db.query(sql, params, (err, result) => {
+      console.log(result);
+  });
+}
 
 const init = () => {
   trackerMenu();
