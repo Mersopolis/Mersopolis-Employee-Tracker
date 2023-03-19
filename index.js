@@ -61,11 +61,11 @@ const trackerMenu = () => {
 };
 
 const viewDepartments = () => {
-  const sql = 'SELECT * FROM departments;';
+  const sql = "SELECT * FROM departments;";
   db.promise()
     .query({ sql, rowsAsArray: true })
     .then(([rows]) => {
-      console.table('\n' + rows + '\n');
+      console.table("\n" + rows + "\n");
       trackerMenu();
     });
 };
@@ -76,7 +76,7 @@ const viewRoles = () => {
   db.promise()
     .query({ sql, rowsAsArray: true })
     .then(([rows]) => {
-      console.table('\n' + rows + '\n');
+      console.table("\n" + rows + "\n");
       trackerMenu();
     });
 };
@@ -87,7 +87,7 @@ const viewEmployees = () => {
   db.promise()
     .query({ sql, rowsAsArray: true })
     .then(([rows]) => {
-      console.table('\n' + rows + '\n');
+      console.table("\n" + rows + "\n");
       trackerMenu();
     });
 };
@@ -105,7 +105,8 @@ const addDepartment = () => {
     const sql = `INSERT INTO departments (name) VALUES ("${response.name}");`; 
 
     db.promise().query(sql)
-    .then(trackerMenu());
+    .then(trackerMenu())
+    .catch((err) => console.error("\n" + err + "\n"));
   });
 };
 
@@ -136,7 +137,8 @@ const addRole = () => {
     );`; 
 
     db.promise().query(sql)
-    .then(trackerMenu());
+    .then(trackerMenu())
+    .catch((err) => console.error("\n" + err + "\n"));
   });
 };
 
@@ -154,26 +156,46 @@ const addEmployee = () => {
       message: "What is the employee's last name?\n"
     },
     {
-      type: "id",
+      type: "input",
       name: "role_id",
       message: "What is the id number of the employee's role?\n",
     },
     {
-      type: "id",
+      type: "input",
       name: "manager_id",
-      message: "What is the id number of the employee's manager?\n",
+      message: "What is the id number of the employee's manager? (Put 0 for no manager)\n",
     }
   ])
   .then((response) => {
-    const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES(
-      "${response.first_name}",
-      "${response.last_name}",
-      "${response.role_id}",
-      "${response.manager_id}"
-    );`; 
+    const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES("${response.first_name}", "${response.last_name}", "${response.role_id}", "${response.manager_id}");`;
 
     db.promise().query(sql)
-    .then(trackerMenu());
+    .then(trackerMenu())
+    .catch((err) => console.error("\n" + err + "\n"));
+  });
+};
+
+
+const updateEmployee = () => {
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "employee_id",
+      message: "What is the id number of the employee you're updating?\n"
+    },
+    {
+      type: "id",
+      name: "role_id",
+      message: "What is the id number of the employee's new role?\n",
+    }
+  ])
+  .then((response) => {
+    const sql = 
+`UPDATE employees SET role_id = "${response.role_id}" WHERE id = "${response.employee_id}";`; 
+
+    db.promise().query(sql)
+    .then(trackerMenu())
+    .catch((err) => console.error("\n" + err + "\n"));
   });
 };
 
