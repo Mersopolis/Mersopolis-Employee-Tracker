@@ -123,67 +123,58 @@ const addRole = () => {
       message: "What is the role's salary?\n"
     },
     {
-      type: "list",
+      type: "input",
       name: "department_id",
-      message: "Which department does the role belong to?\n",
-      choices: "Placeholder"/* TODO: Pull departments into dynamic list for choices */, 
+      message: "What is the id number of the department that the role belong to?\n",
     }
-  ]);
-  const sql = `INSERT INTO roles (name)
-    VALUES (?)`;
-  
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.log("\n" + err.message + "\n");
-    }
-    else {
-      console.log("\n" + result + "\n");
-    }
-  });
-  trackerMenu();
-};
+  ])
+  .then((response) => {
+    const sql = `INSERT INTO roles (title, salary, department_id) VALUES(
+      "${response.title}",
+      "${response.salary}",
+      "${response.department_id}"
+    );`; 
 
-const addEmployeePrompts = [
-  {
-    type: "input",
-    name: "first_name",
-    message: "What is the employee's first name?\n"
-  },
-  {
-    type: "input",
-    name: "last_name",
-    message: "What is the employee's last name?\n"
-  },
-  {
-    type: "list",
-    name: "role_id",
-    message: "What is the employee's role?\n",
-    choices: "Placeholder"/* TODO: Pull roles into dynamic list for choices */, 
-  },
-  {
-    type: "list",
-    name: "manager_id",
-    message: "Whos is the employee's manager?\n",
-    choices: "Placeholder"/* TODO: Pull employees into dynamic list for choices */, 
-  }
-];
+    db.promise().query(sql)
+    .then(trackerMenu());
+  });
+};
 
 // Add an employee
 const addEmployee = () => {
-  inquirer.prompt(addEmployeePrompts);
+  inquirer.prompt([
+    {
+      type: "input",
+      name: "first_name",
+      message: "What is the employee's first name?\n"
+    },
+    {
+      type: "input",
+      name: "last_name",
+      message: "What is the employee's last name?\n"
+    },
+    {
+      type: "id",
+      name: "role_id",
+      message: "What is the id number of the employee's role?\n",
+    },
+    {
+      type: "id",
+      name: "manager_id",
+      message: "What is the id number of the employee's manager?\n",
+    }
+  ])
+  .then((response) => {
+    const sql = `INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES(
+      "${response.first_name}",
+      "${response.last_name}",
+      "${response.role_id}",
+      "${response.manager_id}"
+    );`; 
 
-  const sql = `INSERT INTO employees (first_name)
-    VALUES (?)`;
-  
-  db.query(sql, (err, result) => {
-    if (err) {
-      console.log("\n" + err.message + "\n");
-    }
-    else {
-      console.log("\n" + result + "\n");
-    }
+    db.promise().query(sql)
+    .then(trackerMenu());
   });
-  trackerMenu();
 };
 
 trackerMenu();
