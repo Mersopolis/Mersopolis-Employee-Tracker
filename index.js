@@ -184,7 +184,7 @@ const updateEmployee = () => {
       message: "What is the id number of the employee you're updating?\n"
     },
     {
-      type: "id",
+      type: "input",
       name: "role_id",
       message: "What is the id number of the employee's new role?\n",
     }
